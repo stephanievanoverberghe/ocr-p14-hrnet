@@ -2,6 +2,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import DatePicker from '../components/DatePicker';
+import Dropdown from '../components/Dropdown';
+import Modal from '../components/Modal';
 
 // Schéma de validation Yup
 const employeeSchema = yup.object().shape({
@@ -29,9 +33,11 @@ const employeeSchema = yup.object().shape({
 
 function CreateEmployeePage() {
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(employeeSchema),
@@ -41,7 +47,7 @@ function CreateEmployeePage() {
         const employees = JSON.parse(localStorage.getItem('employees')) || [];
         employees.push(data);
         localStorage.setItem('employees', JSON.stringify(employees));
-        navigate('/list');
+        setIsModalOpen(true);
     };
 
     return (
@@ -63,18 +69,10 @@ function CreateEmployeePage() {
                 </div>
 
                 {/* Date de naissance */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Date de naissance</label>
-                    <input {...register('dateOfBirth')} type="date" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.dateOfBirth?.message}</p>
-                </div>
+                <DatePicker name="dateOfBirth" label="Date de naissance" control={control} error={errors.dateOfBirth?.message} />
 
                 {/* Date d'embauche */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Date d&apos;embauche</label>
-                    <input {...register('startDate')} type="date" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.startDate?.message}</p>
-                </div>
+                <DatePicker name="startDate" label="Date d'embauche" control={control} error={errors.startDate?.message} />
 
                 {/* Adresse */}
                 <div>
@@ -91,11 +89,17 @@ function CreateEmployeePage() {
                 </div>
 
                 {/* État */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">État</label>
-                    <input {...register('state')} type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.state?.message}</p>
-                </div>
+                <Dropdown
+                    name="state"
+                    label="État"
+                    options={[
+                        { value: 'NY', label: 'New York' },
+                        { value: 'CA', label: 'California' },
+                        { value: 'FL', label: 'Florida' },
+                    ]}
+                    control={control}
+                    error={errors.state?.message}
+                />
 
                 {/* Code postal */}
                 <div>
@@ -105,23 +109,28 @@ function CreateEmployeePage() {
                 </div>
 
                 {/* Département */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Département</label>
-                    <select {...register('department')} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]">
-                        <option value="Ventes">Ventes</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Ingénierie">Ingénierie</option>
-                        <option value="Ressources humaines">Ressources humaines</option>
-                        <option value="Juridique">Juridique</option>
-                    </select>
-                    <p className="text-red-500 text-sm">{errors.department?.message}</p>
-                </div>
+                <Dropdown
+                    name="department"
+                    label="Département"
+                    options={[
+                        { value: 'Sales', label: 'Ventes' },
+                        { value: 'Marketing', label: 'Marketing' },
+                        { value: 'Engineering', label: 'Ingénierie' },
+                        { value: 'Human Resources', label: 'Ressources Humaines' },
+                        { value: 'Legal', label: 'Juridique' },
+                    ]}
+                    control={control}
+                    error={errors.department?.message}
+                />
 
                 {/* Bouton de validation */}
                 <button type="submit" className="w-full bg-[#5a6f07] text-white py-2 rounded hover:bg-[#4e5d06] transition duration-300 ease-in-out">
                     Sauvegarder
                 </button>
             </form>
+
+            {/* ✅ Modale de confirmation */}
+            <Modal isOpen={isModalOpen} onClose={() => navigate('/list')} message="Employé ajouté avec succès !" />
         </div>
     );
 }
