@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 function Table({ data }) {
     return (
-        <div className="overflow-x-auto">
+        <div className="mt-6 hidden lg:block overflow-x-auto">
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                 <thead className="bg-[#5a6f07] text-white">
                     <tr>

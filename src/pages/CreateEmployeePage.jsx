@@ -2,25 +2,21 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import DatePicker from '../components/DatePicker';
+import { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { addEmployee } from '../store/employeeSlice';
+import CustomDatePicker from '../components/DatePicker';
 import Dropdown from '../components/Dropdown';
 import Modal from '../components/Modal';
+import states from '../data/states';
+import departments from '../data/departments';
 
-// Schéma de validation Yup
+// ✅ Schéma de validation Yup mis à jour avec `date()`
 const employeeSchema = yup.object().shape({
     firstName: yup.string().required('Le prénom est requis'),
     lastName: yup.string().required('Le nom est requis'),
-    dateOfBirth: yup
-        .string()
-        .transform((value) => (value === '' ? null : value))
-        .nullable()
-        .required('La date de naissance est requise'),
-    startDate: yup
-        .string()
-        .transform((value) => (value === '' ? null : value))
-        .nullable()
-        .required("La date d'embauche est requise"),
+    dateOfBirth: yup.date().nullable().typeError('Veuillez entrer une date valide').required('La date de naissance est requise'),
+    startDate: yup.date().nullable().typeError('Veuillez entrer une date valide').required("La date d'embauche est requise"),
     street: yup.string().required("L'adresse est requise"),
     city: yup.string().required('La ville est requise'),
     state: yup.string().required("L'état est requis"),
@@ -33,7 +29,9 @@ const employeeSchema = yup.object().shape({
 
 function CreateEmployeePage() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -44,11 +42,19 @@ function CreateEmployeePage() {
     });
 
     const onSubmit = (data) => {
-        const employees = JSON.parse(localStorage.getItem('employees')) || [];
-        employees.push(data);
-        localStorage.setItem('employees', JSON.stringify(employees));
+        const formattedData = {
+            ...data,
+            dateOfBirth: data.dateOfBirth?.toISOString().split('T')[0],
+            startDate: data.startDate?.toISOString().split('T')[0],
+        };
+        dispatch(addEmployee(formattedData));
         setIsModalOpen(true);
     };
+
+    const handleCloseModal = useCallback(() => {
+        setIsModalOpen(false);
+        setTimeout(() => navigate('/list'), 100); // ✅ Délai pour bien afficher la liste mise à jour
+    }, [navigate]);
 
     return (
         <div className="w-full mx-2 md:max-w-lg md:mx-auto lg:max-w-xl mt-6 p-4 md:p-6 bg-white shadow-lg rounded-lg">
@@ -69,10 +75,10 @@ function CreateEmployeePage() {
                 </div>
 
                 {/* Date de naissance */}
-                <DatePicker name="dateOfBirth" label="Date de naissance" control={control} error={errors.dateOfBirth?.message} />
+                <CustomDatePicker name="dateOfBirth" label="Date de naissance" control={control} error={errors.dateOfBirth?.message} />
 
                 {/* Date d'embauche */}
-                <DatePicker name="startDate" label="Date d'embauche" control={control} error={errors.startDate?.message} />
+                <CustomDatePicker name="startDate" label="Date d'embauche" control={control} error={errors.startDate?.message} />
 
                 {/* Adresse */}
                 <div>
@@ -92,11 +98,7 @@ function CreateEmployeePage() {
                 <Dropdown
                     name="state"
                     label="État"
-                    options={[
-                        { value: 'NY', label: 'New York' },
-                        { value: 'CA', label: 'California' },
-                        { value: 'FL', label: 'Florida' },
-                    ]}
+                    options={states.map((state) => ({ key: state.abbreviation, value: state.abbreviation, label: state.name }))}
                     control={control}
                     error={errors.state?.message}
                 />
@@ -112,13 +114,7 @@ function CreateEmployeePage() {
                 <Dropdown
                     name="department"
                     label="Département"
-                    options={[
-                        { value: 'Sales', label: 'Ventes' },
-                        { value: 'Marketing', label: 'Marketing' },
-                        { value: 'Engineering', label: 'Ingénierie' },
-                        { value: 'Human Resources', label: 'Ressources Humaines' },
-                        { value: 'Legal', label: 'Juridique' },
-                    ]}
+                    options={departments.map((department) => ({ key: department.name, value: department.name, label: department.name }))}
                     control={control}
                     error={errors.department?.message}
                 />
@@ -129,8 +125,8 @@ function CreateEmployeePage() {
                 </button>
             </form>
 
-            {/* ✅ Modale de confirmation */}
-            <Modal isOpen={isModalOpen} onClose={() => navigate('/list')} message="Employé ajouté avec succès !" />
+            {/* Modale de confirmation */}
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal} message="Employé ajouté avec succès !" />
         </div>
     );
 }
