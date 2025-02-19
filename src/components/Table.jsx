@@ -1,33 +1,65 @@
 import PropTypes from 'prop-types';
+import { useMemo } from 'react';
+import { flexRender, getCoreRowModel, useReactTable, createColumnHelper } from '@tanstack/react-table';
+import states from '../data/states';
 
 function Table({ data }) {
+    const columnHelper = createColumnHelper();
+
+    // ✅ Convertir le nom de l'État en abréviation
+    const getStateAbbreviation = (stateName) => {
+        const state = states.find((s) => s.name === stateName);
+        return state ? state.abbreviation : stateName;
+    };
+
+    // ✅ Définition des colonnes
+    const columns = useMemo(
+        () => [
+            columnHelper.accessor('firstName', { header: 'Prénom' }),
+            columnHelper.accessor('lastName', { header: 'Nom' }),
+            columnHelper.accessor('dateOfBirth', { header: 'Date de naissance' }),
+            columnHelper.accessor('startDate', { header: "Date d'embauche" }),
+            columnHelper.accessor('department', { header: 'Département' }),
+            columnHelper.accessor('city', { header: 'Ville' }),
+            columnHelper.accessor('state', {
+                header: 'État',
+                cell: (info) => getStateAbbreviation(info.getValue()),
+            }),
+            columnHelper.accessor('zipCode', { header: 'CP' }),
+        ],
+        []
+    );
+
+    // ✅ Initialisation de React Table
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
+
     return (
         <div className="mt-6 hidden lg:block overflow-x-auto">
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                 <thead className="bg-[#5a6f07] text-white">
-                    <tr>
-                        <th className="p-3 text-left">Prénom</th>
-                        <th className="p-3 text-left">Nom</th>
-                        <th className="p-3 text-left">Date de naissance</th>
-                        <th className="p-3 text-left">Date d&aposembauche</th>
-                        <th className="p-3 text-left">Département</th>
-                        <th className="p-3 text-left">Ville</th>
-                        <th className="p-3 text-left">État</th>
-                        <th className="p-3 text-left">Code Postal</th>
-                    </tr>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                                <th key={header.id} className="p-3 text-left">
+                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
                 </thead>
                 <tbody>
-                    {data.length > 0 ? (
-                        data.map((employee, index) => (
-                            <tr key={index} className="border-t hover:bg-gray-100">
-                                <td className="p-3">{employee.firstName}</td>
-                                <td className="p-3">{employee.lastName}</td>
-                                <td className="p-3">{employee.dateOfBirth}</td>
-                                <td className="p-3">{employee.startDate}</td>
-                                <td className="p-3">{employee.department}</td>
-                                <td className="p-3">{employee.city}</td>
-                                <td className="p-3">{employee.state}</td>
-                                <td className="p-3">{employee.zipCode}</td>
+                    {table.getRowModel().rows.length > 0 ? (
+                        table.getRowModel().rows.map((row) => (
+                            <tr key={row.id} className="border-t hover:bg-gray-100">
+                                {row.getVisibleCells().map((cell) => (
+                                    <td key={cell.id} className="p-3">
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                ))}
                             </tr>
                         ))
                     ) : (
@@ -43,7 +75,7 @@ function Table({ data }) {
     );
 }
 
-// Définition des PropTypes
+// ✅ Définition des PropTypes
 Table.propTypes = {
     data: PropTypes.arrayOf(
         PropTypes.shape({
