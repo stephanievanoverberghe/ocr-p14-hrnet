@@ -4,17 +4,17 @@ import { fetchEmployees } from '../store/employeeSlice';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
 import Dropdown from '../components/Dropdown';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 function EmployeeListPage() {
     const dispatch = useDispatch();
     const employees = useSelector((state) => state.employees.list);
     const status = useSelector((state) => state.employees.status);
     const error = useSelector((state) => state.employees.error);
-    const [searchTerm, setSearchTerm] = useState('');
     const [employeesPerPage, setEmployeesPerPage] = useState(10); // Valeur initiale
     const [currentPage, setCurrentPage] = useState(1); // Page courante
-    const { control } = useForm();
+    const { control, setValue, watch } = useForm();
+    const searchTerm = watch('searchTerm', ''); // Récupérer la valeur du champ de recherche
 
     useEffect(() => {
         if (status === 'idle') {
@@ -22,13 +22,34 @@ function EmployeeListPage() {
         }
     }, [dispatch, status]);
 
-    // Filtrer les employés selon la recherche
-    const filteredEmployees = employees.filter((employee) => `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()));
+    // Fonction de filtrage : on compare les premiers caractères du terme de recherche avec la valeur
+    const filteredEmployees =
+        searchTerm.length >= 2
+            ? employees.filter((employee) => {
+                  const searchTermLower = searchTerm.toLowerCase();
+                  const isMatching = (value) => value.toLowerCase().startsWith(searchTermLower);
+
+                  const firstNameMatches = isMatching(employee.firstName);
+                  const lastNameMatches = isMatching(employee.lastName);
+                  const departmentMatches = isMatching(employee.department);
+                  const cityMatches = isMatching(employee.city);
+                  const stateMatches = isMatching(employee.state);
+                  const zipCodeMatches = isMatching(employee.zipCode);
+
+                  // Si le terme de recherche fait au moins 2 caractères, appliquer le filtrage
+                  return firstNameMatches || lastNameMatches || departmentMatches || cityMatches || stateMatches || zipCodeMatches;
+              })
+            : employees; // Si moins de 2 caractères, afficher tous les employés
 
     // Logique pour afficher les employés par page
     const indexOfLastEmployee = currentPage * employeesPerPage;
     const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
     const currentEmployees = filteredEmployees.slice(indexOfFirstEmployee, indexOfLastEmployee);
+
+    // Calcul des entrées visibles à afficher
+    const totalEmployees = filteredEmployees.length;
+    const startEmployee = indexOfFirstEmployee + 1;
+    const endEmployee = Math.min(indexOfLastEmployee, totalEmployees);
 
     return (
         <div className="max-w-6xl mx-auto mt-6 p-4">
@@ -54,14 +75,26 @@ function EmployeeListPage() {
                     }}
                 />
 
-                {/* Barre de recherche */}
-                <input
-                    type="text"
-                    placeholder="Rechercher un employé..."
-                    className="w-1/3 p-2 border rounded mt-4 focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                {/* Barre de recherche avec react-hook-form */}
+                <Controller
+                    name="searchTerm"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                        <input
+                            {...field}
+                            type="text"
+                            placeholder="Rechercher un employé..."
+                            className="w-1/3 p-2 border rounded mt-4 focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                            onChange={(e) => setValue('searchTerm', e.target.value)} // Mettre à jour l'état searchTerm avec react-hook-form
+                        />
+                    )}
                 />
+            </div>
+
+            {/* Afficher l'information de la pagination (Showing X to Y of Z entries) */}
+            <div className="mt-4 text-center text-sm text-gray-500">
+                {totalEmployees > 0 ? `Affichage de ${startEmployee} à ${endEmployee} sur ${totalEmployees} employés` : 'Aucun employé trouvé'}
             </div>
 
             {/* Gestion des états (Chargement, Erreur, Données) */}
@@ -69,7 +102,7 @@ function EmployeeListPage() {
             {status === 'failed' && <p className="text-center mt-5 text-red-500">Erreur : {error}</p>}
             {status === 'succeeded' && (
                 <>
-                    {/* Affichage en tableau */}
+                    {/* Affichage des employés */}
                     <Table data={currentEmployees} />
 
                     {/* Pagination */}
