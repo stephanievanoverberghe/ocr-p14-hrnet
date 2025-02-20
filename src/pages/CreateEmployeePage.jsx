@@ -59,7 +59,7 @@ function CreateEmployeePage() {
     return (
         <div className="w-full mx-2 md:max-w-lg md:mx-auto lg:max-w-xl mt-6 p-4 md:p-6 bg-white shadow-lg rounded-lg">
             <h1 className="text-lg sm:text-2xl font-bold text-center text-[#5a6f07]">Créer un employé</h1>
-            <form className="mt-4 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-4 space-y-4 w-full" onSubmit={handleSubmit(onSubmit)}>
                 {/* Champ Prénom */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Prénom</label>
@@ -75,10 +75,10 @@ function CreateEmployeePage() {
                 </div>
 
                 {/* Date de naissance */}
-                <CustomDatePicker name="dateOfBirth" label="Date de naissance" control={control} error={errors.dateOfBirth?.message} />
+                <CustomDatePicker name="dateOfBirth" label="Date de naissance" control={control} error={errors.dateOfBirth?.message} className="w-full" />
 
                 {/* Date d'embauche */}
-                <CustomDatePicker name="startDate" label="Date d'embauche" control={control} error={errors.startDate?.message} />
+                <CustomDatePicker name="startDate" label="Date d'embauche" control={control} error={errors.startDate?.message} className="w-full" />
 
                 {/* Adresse */}
                 <div>
@@ -98,7 +98,7 @@ function CreateEmployeePage() {
                 <Dropdown
                     name="state"
                     label="État"
-                    options={states.map((state) => ({ key: state.abbreviation, value: state.abbreviation, label: state.name }))}
+                    options={[{ value: '', label: 'Choisir un État' }, ...states.map((state) => ({ key: state.abbreviation, value: state.abbreviation, label: state.name }))]}
                     control={control}
                     error={errors.state?.message}
                     className="w-full"
@@ -115,7 +115,10 @@ function CreateEmployeePage() {
                 <Dropdown
                     name="department"
                     label="Département"
-                    options={departments.map((department) => ({ key: department.name, value: department.name, label: department.name }))}
+                    options={[
+                        { value: '', label: 'Choisir un département' },
+                        ...departments.map((department) => ({ key: department.name, value: department.name, label: department.name })),
+                    ]}
                     control={control}
                     error={errors.department?.message}
                     className="w-full"
