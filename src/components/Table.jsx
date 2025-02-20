@@ -27,7 +27,7 @@ function Table({ data }) {
             }),
             columnHelper.accessor('zipCode', { header: 'CP' }),
         ],
-        []
+        [columnHelper]
     );
 
     // ✅ Initialisation de React Table

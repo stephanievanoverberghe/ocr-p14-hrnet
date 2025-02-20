@@ -5,6 +5,18 @@ function Pagination({ totalEmployees, employeesPerPage, currentPage, setCurrentP
 
     if (totalPages <= 1) return null;
 
+    const maxVisiblePages = 5;
+    const halfVisiblePages = Math.floor(maxVisiblePages / 2);
+
+    let startPage = Math.max(currentPage - halfVisiblePages, 1);
+    let endPage = Math.min(currentPage + halfVisiblePages, totalPages);
+
+    if (currentPage - halfVisiblePages < 1) {
+        endPage = Math.min(maxVisiblePages, totalPages);
+    } else if (currentPage + halfVisiblePages > totalPages) {
+        startPage = Math.max(totalPages - maxVisiblePages + 1, 1);
+    }
+
     const handleClick = (page) => {
         setCurrentPage(page);
     };
@@ -18,7 +30,7 @@ function Pagination({ totalEmployees, employeesPerPage, currentPage, setCurrentP
             >
                 Précédent
             </button>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+            {Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index).map((page) => (
                 <button
                     key={page}
                     onClick={() => handleClick(page)}
