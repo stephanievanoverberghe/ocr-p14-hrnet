@@ -18,8 +18,9 @@ function Table({ data }) {
             columnHelper.accessor('firstName', { header: 'Prénom' }),
             columnHelper.accessor('lastName', { header: 'Nom' }),
             columnHelper.accessor('dateOfBirth', { header: 'Date de naissance' }),
-            columnHelper.accessor('startDate', { header: "Date d'embauche" }),
             columnHelper.accessor('department', { header: 'Département' }),
+            columnHelper.accessor('street', { header: 'Département' }),
+            columnHelper.accessor('startDate', { header: "Date d'embauche" }),
             columnHelper.accessor('city', { header: 'Ville' }),
             columnHelper.accessor('state', {
                 header: 'État',

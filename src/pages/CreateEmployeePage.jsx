@@ -101,6 +101,7 @@ function CreateEmployeePage() {
                     options={states.map((state) => ({ key: state.abbreviation, value: state.abbreviation, label: state.name }))}
                     control={control}
                     error={errors.state?.message}
+                    className="w-full"
                 />
 
                 {/* Code postal */}
@@ -117,6 +118,7 @@ function CreateEmployeePage() {
                     options={departments.map((department) => ({ key: department.name, value: department.name, label: department.name }))}
                     control={control}
                     error={errors.department?.message}
+                    className="w-full"
                 />
 
                 {/* Bouton de validation */}

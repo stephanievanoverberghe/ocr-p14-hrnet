@@ -5,7 +5,7 @@ function Pagination({ totalEmployees, employeesPerPage, currentPage, setCurrentP
 
     if (totalPages <= 1) return null;
 
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 3;
     const halfVisiblePages = Math.floor(maxVisiblePages / 2);
 
     let startPage = Math.max(currentPage - halfVisiblePages, 1);
@@ -28,7 +28,7 @@ function Pagination({ totalEmployees, employeesPerPage, currentPage, setCurrentP
                 disabled={currentPage === 1}
                 className={`px-3 py-1 border rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'bg-white text-gray-700'}`}
             >
-                Précédent
+                <i className="fa-solid fa-angles-left"></i>
             </button>
             {Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index).map((page) => (
                 <button
@@ -44,7 +44,7 @@ function Pagination({ totalEmployees, employeesPerPage, currentPage, setCurrentP
                 disabled={currentPage === totalPages}
                 className={`px-3 py-1 border rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'bg-white text-gray-700'}`}
             >
-                Suivant
+                <i className="fa-solid fa-angles-right"></i>
             </button>
         </div>
     );

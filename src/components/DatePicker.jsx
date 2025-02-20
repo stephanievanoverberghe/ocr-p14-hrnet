@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 function CustomDatePicker({ name, label, control, error }) {
     return (
-        <div>
+        <div className="w-full">
             <label className="block text-sm font-medium text-gray-700">{label}</label>
             <Controller
                 name={name}

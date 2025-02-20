@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEmployees } from '../store/employeeSlice';
+import EmployeeCards from '../components/EmployeeCards';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
 import Dropdown from '../components/Dropdown';
@@ -52,10 +53,10 @@ function EmployeeListPage() {
     const endEmployee = Math.min(indexOfLastEmployee, totalEmployees);
 
     return (
-        <div className="max-w-6xl mx-auto mt-6 p-4">
-            <h1 className="text-2xl font-bold text-center text-[#5a6f07]">Liste des employés</h1>
+        <div className="lg:max-w-6xl mx-auto mt-6 p-4 w-full">
+            <h1 className="text-2xl font-bold text-center text-[#5a6f07] mb-4">Liste des employés</h1>
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full">
                 {/* Dropdown pour le nombre d'employés par page */}
                 <Dropdown
                     name="employeesPerPage"
@@ -73,6 +74,8 @@ function EmployeeListPage() {
                         setEmployeesPerPage(value); // Mettre à jour la valeur de employeesPerPage
                         setCurrentPage(1); // Réinitialiser la page à 1 chaque fois que l'on change la sélection
                     }}
+                    className="w-full md:w-auto"
+                    isEmployeeListPage={true}
                 />
 
                 {/* Barre de recherche avec react-hook-form */}
@@ -85,7 +88,7 @@ function EmployeeListPage() {
                             {...field}
                             type="text"
                             placeholder="Rechercher un employé..."
-                            className="w-1/3 p-2 border rounded mt-4 focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                            className="md:w-1/3 p-2 border rounded mt-4 focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
                             onChange={(e) => setValue('searchTerm', e.target.value)} // Mettre à jour l'état searchTerm avec react-hook-form
                         />
                     )}
@@ -102,8 +105,13 @@ function EmployeeListPage() {
             {status === 'failed' && <p className="text-center mt-5 text-red-500">Erreur : {error}</p>}
             {status === 'succeeded' && (
                 <>
-                    {/* Affichage des employés */}
-                    <Table data={currentEmployees} />
+                    {/* Affichage Mobile: Cartes */}
+                    <EmployeeCards employees={currentEmployees} />
+
+                    {/* Affichage Desktop: Tableau */}
+                    <div className="mt-6 lg:block overflow-x-auto">
+                        <Table data={currentEmployees} />
+                    </div>
 
                     {/* Pagination */}
                     <Pagination totalEmployees={filteredEmployees.length} employeesPerPage={employeesPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} />
