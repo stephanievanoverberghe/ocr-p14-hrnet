@@ -53,7 +53,7 @@ function EmployeeListPage() {
     const endEmployee = Math.min(indexOfLastEmployee, totalEmployees);
 
     return (
-        <div className="lg:max-w-6xl mx-auto mt-6 p-4 w-full">
+        <div className="lg:max-w-7xl mx-auto mt-6 p-4 w-full">
             <h1 className="text-2xl font-bold text-center text-[#5a6f07] mb-4">Liste des employés</h1>
 
             <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full">
@@ -109,7 +109,7 @@ function EmployeeListPage() {
                     <EmployeeCards employees={currentEmployees} />
 
                     {/* Affichage Desktop: Tableau */}
-                    <div className="mt-6 lg:block overflow-x-auto">
+                    <div className="mt-6 lg:block overflow-x-auto text-sm">
                         <Table data={currentEmployees} />
                     </div>
 

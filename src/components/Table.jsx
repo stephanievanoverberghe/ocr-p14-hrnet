@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
-import { flexRender, getCoreRowModel, useReactTable, createColumnHelper } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, getSortedRowModel } from '@tanstack/react-table';
 import states from '../data/states';
 
 function Table({ data }) {
+    const [sorting, setSorting] = useState([]);
+
     const columnHelper = createColumnHelper();
 
     // ✅ Convertir le nom de l'État en abréviation
@@ -17,10 +19,10 @@ function Table({ data }) {
         () => [
             columnHelper.accessor('firstName', { header: 'Prénom' }),
             columnHelper.accessor('lastName', { header: 'Nom' }),
-            columnHelper.accessor('dateOfBirth', { header: 'Date de naissance' }),
+            columnHelper.accessor('dateOfBirth', { header: 'Date de naissance', sortingFn: 'datetime' }),
             columnHelper.accessor('department', { header: 'Département' }),
-            columnHelper.accessor('street', { header: 'Département' }),
-            columnHelper.accessor('startDate', { header: "Date d'embauche" }),
+            columnHelper.accessor('street', { header: 'Rue' }),
+            columnHelper.accessor('startDate', { header: "Date d'embauche", sortingFn: 'datetime' }),
             columnHelper.accessor('city', { header: 'Ville' }),
             columnHelper.accessor('state', {
                 header: 'État',
@@ -35,7 +37,10 @@ function Table({ data }) {
     const table = useReactTable({
         data,
         columns,
+        state: { sorting },
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
     });
 
     return (
@@ -44,11 +49,30 @@ function Table({ data }) {
                 <thead className="bg-[#5a6f07] text-white">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <th key={header.id} className="p-3 text-left">
-                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                </th>
-                            ))}
+                            {headerGroup.headers.map((header) => {
+                                const isSorted = header.column.getIsSorted();
+                                const isAscending = isSorted === 'asc';
+                                const isDescending = isSorted === 'desc';
+                                return (
+                                    <th key={header.id} className="p-3 text-left">
+                                        <div className="flex items-center justify-center text-sm">
+                                            {/* Titre de la colonne */}
+                                            <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+
+                                            {/* Flèches de tri (haut et bas) */}
+                                            <div
+                                                className="ml-2 flex flex-col items-center text-[10px] cursor-pointer"
+                                                onClick={() => {
+                                                    header.column.toggleSorting();
+                                                }}
+                                            >
+                                                <i className={`fa-solid fa-caret-up ${isAscending ? 'text-emerald-500' : ''} block`}></i>
+                                                <i className={`fa-solid fa-caret-down ${isDescending ? 'text-red-500' : ''} block`}></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                );
+                            })}
                         </tr>
                     ))}
                 </thead>
