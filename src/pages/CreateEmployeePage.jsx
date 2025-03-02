@@ -62,36 +62,114 @@ function CreateEmployeePage() {
             <form className="mt-4 space-y-4 w-full" onSubmit={handleSubmit(onSubmit)}>
                 {/* Champ Prénom */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Prénom</label>
-                    <input {...register('firstName')} type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.firstName?.message}</p>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                        Prénom
+                    </label>
+                    <input
+                        id="firstName"
+                        {...register('firstName')}
+                        type="text"
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                        aria-invalid={errors.firstName ? 'true' : 'false'}
+                        aria-describedby="firstNameError"
+                    />
+                    {errors.firstName && (
+                        <p id="firstNameError" className="text-red-500 text-sm" role="alert">
+                            {errors.firstName?.message}
+                        </p>
+                    )}
                 </div>
 
                 {/* Champ Nom */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Nom</label>
-                    <input {...register('lastName')} type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.lastName?.message}</p>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                        Nom
+                    </label>
+                    <input
+                        id="lastName"
+                        {...register('lastName')}
+                        type="text"
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                        aria-invalid={errors.lastName ? 'true' : 'false'}
+                        aria-describedby="lastNameError"
+                    />
+                    {errors.lastName && (
+                        <p id="lastNameError" className="text-red-500 text-sm" role="alert">
+                            {errors.lastName?.message}
+                        </p>
+                    )}
                 </div>
 
                 {/* Date de naissance */}
-                <CustomDatePicker name="dateOfBirth" label="Date de naissance" control={control} error={errors.dateOfBirth?.message} className="w-full" />
+                <CustomDatePicker
+                    name="dateOfBirth"
+                    label="Date de naissance"
+                    control={control}
+                    error={errors.dateOfBirth?.message}
+                    className="w-full"
+                    aria-invalid={errors.dateOfBirth ? 'true' : 'false'}
+                    aria-describedby="dateOfBirthError"
+                />
+                {errors.dateOfBirth && (
+                    <p id="dateOfBirthError" className="text-red-500 text-sm" role="alert">
+                        {errors.dateOfBirth?.message}
+                    </p>
+                )}
 
                 {/* Date d'embauche */}
-                <CustomDatePicker name="startDate" label="Date d'embauche" control={control} error={errors.startDate?.message} className="w-full" />
+                <CustomDatePicker
+                    name="startDate"
+                    label="Date d'embauche"
+                    control={control}
+                    error={errors.startDate?.message}
+                    className="w-full"
+                    aria-invalid={errors.startDate ? 'true' : 'false'}
+                    aria-describedby="startDateError"
+                />
+                {errors.startDate && (
+                    <p id="startDateError" className="text-red-500 text-sm" role="alert">
+                        {errors.startDate?.message}
+                    </p>
+                )}
 
-                {/* Adresse */}
+                {/* Rue */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Rue</label>
-                    <input {...register('street')} type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.street?.message}</p>
+                    <label htmlFor="street" className="block text-sm font-medium text-gray-700">
+                        Rue
+                    </label>
+                    <input
+                        id="street"
+                        {...register('street')}
+                        type="text"
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                        aria-invalid={errors.street ? 'true' : 'false'}
+                        aria-describedby="streetError"
+                    />
+                    {errors.street && (
+                        <p id="streetError" className="text-red-500 text-sm" role="alert">
+                            {errors.street?.message}
+                        </p>
+                    )}
                 </div>
 
                 {/* Ville */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Ville</label>
-                    <input {...register('city')} type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.city?.message}</p>
+                    <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                        Ville
+                    </label>
+                    <input
+                        id="city"
+                        {...register('city')}
+                        type="text"
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                        aria-invalid={errors.city ? 'true' : 'false'}
+                        aria-describedby="cityError"
+                    />
+                    {errors.city && (
+                        <p id="cityError" className="text-red-500 text-sm" role="alert">
+                            {errors.city?.message}
+                        </p>
+                    )}
                 </div>
 
                 {/* État */}
@@ -102,13 +180,33 @@ function CreateEmployeePage() {
                     control={control}
                     error={errors.state?.message}
                     className="w-full"
+                    aria-invalid={errors.state ? 'true' : 'false'}
+                    aria-describedby="stateError"
                 />
+                {errors.state && (
+                    <p id="stateError" className="text-red-500 text-sm" role="alert">
+                        {errors.state?.message}
+                    </p>
+                )}
 
                 {/* Code postal */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Code postal</label>
-                    <input {...register('zipCode')} type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]" />
-                    <p className="text-red-500 text-sm">{errors.zipCode?.message}</p>
+                    <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">
+                        Code postal
+                    </label>
+                    <input
+                        id="zipCode"
+                        {...register('zipCode')}
+                        type="text"
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                        aria-invalid={errors.zipCode ? 'true' : 'false'}
+                        aria-describedby="zipCodeError"
+                    />
+                    {errors.zipCode && (
+                        <p id="zipCodeError" className="text-red-500 text-sm" role="alert">
+                            {errors.zipCode?.message}
+                        </p>
+                    )}
                 </div>
 
                 {/* Département */}
@@ -122,7 +220,14 @@ function CreateEmployeePage() {
                     control={control}
                     error={errors.department?.message}
                     className="w-full"
+                    aria-invalid={errors.department ? 'true' : 'false'}
+                    aria-describedby="departmentError"
                 />
+                {errors.department && (
+                    <p id="departmentError" className="text-red-500 text-sm" role="alert">
+                        {errors.department?.message}
+                    </p>
+                )}
 
                 {/* Bouton de validation */}
                 <button type="submit" className="w-full bg-[#5a6f07] text-white py-2 rounded hover:bg-[#4e5d06] transition duration-300 ease-in-out">

@@ -54,7 +54,9 @@ function EmployeeListPage() {
 
     return (
         <div className="lg:max-w-7xl mx-auto mt-6 p-4 w-full">
-            <h1 className="text-2xl font-bold text-center text-[#5a6f07] mb-4">Liste des employés</h1>
+            <h1 className="text-2xl font-bold text-center text-[#5a6f07] mb-4" id="employeeListTitle">
+                Liste des employés
+            </h1>
 
             <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full">
                 {/* Dropdown pour le nombre d'employés par page */}
@@ -89,6 +91,7 @@ function EmployeeListPage() {
                             type="text"
                             placeholder="Rechercher un employé..."
                             className="md:w-1/3 p-2 border rounded mt-4 focus:outline-none focus:ring-2 focus:ring-[#5a6f07]"
+                            aria-label="Rechercher un employé" // Amélioration pour l'accessibilité
                             onChange={(e) => setValue('searchTerm', e.target.value)} // Mettre à jour l'état searchTerm avec react-hook-form
                         />
                     )}
@@ -96,7 +99,7 @@ function EmployeeListPage() {
             </div>
 
             {/* Afficher l'information de la pagination (Showing X to Y of Z entries) */}
-            <div className="mt-4 text-center text-sm text-gray-500">
+            <div className="mt-4 text-center text-sm text-gray-500" aria-live="polite">
                 {totalEmployees > 0 ? `Affichage de ${startEmployee} à ${endEmployee} sur ${totalEmployees} employés` : 'Aucun employé trouvé'}
             </div>
 
