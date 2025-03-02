@@ -10,6 +10,7 @@ function CustomDatePicker({ name, label, control, error }) {
             <Controller
                 name={name}
                 control={control}
+                className="w-full"
                 render={({ field }) => (
                     <DatePicker
                         {...field}
